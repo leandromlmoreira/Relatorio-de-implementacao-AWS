@@ -1,0 +1,28 @@
+Serviço,Configuração,Custo Mensal (USD),Custo Anual (USD),Observações
+Amazon EC2,t3.medium - 1 instância,$30.00,$360.00,Instância de produção
+Amazon EC2,t3.small - 1 instância (staging),$15.00,$180.00,Ambiente de desenvolvimento
+Amazon RDS,db.t3.micro - MySQL,$15.00,$180.00,Banco de dados principal
+Amazon RDS,db.t3.micro - MySQL (backup),$8.00,$96.00,Instância de backup
+Amazon CloudWatch,Métricas + Logs,$10.00,$120.00,Monitoramento básico
+Amazon S3,Standard Storage - 100GB,$2.30,$27.60,Backup e arquivos estáticos
+Amazon Route 53,Hosted Zone,$0.50,$6.00,DNS management
+Amazon Certificate Manager,SSL Certificate,$0.00,$0.00,Gratuito para uso com ALB
+Amazon Application Load Balancer,ALB,$16.20,$194.40,Load balancer
+Amazon VPC,NAT Gateway,$32.40,$388.80,Conectividade para subnets privadas
+Amazon EBS,30GB gp3,$2.40,$28.80,Storage adicional
+Amazon Data Transfer,Outbound - 1TB,$90.00,$1080.00,Transferência de dados
+Amazon CloudFront,CDN - 1TB,$85.00,$1020.00,Content delivery
+Amazon SES,Email service,$1.00,$12.00,Notificações por email
+Amazon SNS,Simple Notification Service,$0.50,$6.00,Alertas SMS
+,,,,,
+TOTAL MENSAL,,$303.30,$3699.60,
+TOTAL ANUAL,,,$3699.60,
+,,,,,
+Economia vs On-Premises,,,,
+Servidor Físico (compra),$5000.00,$0.00,Investimento inicial
+Manutenção Anual,$2000.00,$2000.00,Suporte e manutenção
+Energia e Refrigeração,$1200.00,$1200.00,Custos operacionais
+Administrador de TI,$60000.00,$60000.00,Salário anual
+,,,,,
+TOTAL ON-PREMISES ANUAL,,,$65200.00,
+ECONOMIA ANUAL,,,$61500.40,94% de economia
