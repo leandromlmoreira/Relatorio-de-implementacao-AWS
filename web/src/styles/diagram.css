@@ -1,0 +1,356 @@
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 0 0 clamp(28px, 3.5vw, 44px);
+  padding: 0;
+  list-style: none;
+  color: var(--ink-2);
+  font-size: 13px;
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 16%, transparent);
+}
+
+.legend-dot--request {
+  color: var(--accent);
+  background: var(--accent);
+}
+
+.legend-dot--static {
+  color: var(--static);
+  background: var(--static);
+}
+
+.legend-dot--metric {
+  color: var(--metric);
+  background: var(--metric);
+}
+
+.legend-line {
+  width: 18px;
+  border-top: 2px dashed var(--ink-3);
+}
+
+.diagram-card {
+  overflow: hidden;
+}
+
+.diagram-stage {
+  position: relative;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line);
+}
+
+.diagram-host {
+  padding: clamp(8px, 1.5vw, 20px);
+}
+
+.diagram-stage .legend {
+  position: absolute;
+  top: clamp(20px, 2.4vw, 32px);
+  left: clamp(20px, 2.4vw, 32px);
+  z-index: 1;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--line), var(--shadow-soft);
+}
+
+.legend-title {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.diagram-svg {
+  width: 100%;
+  height: auto;
+  font-family: var(--font-sans);
+  user-select: none;
+}
+
+.diagram-grid .grid-dot,
+.grid-dot {
+  fill: var(--grid-dot);
+}
+
+.region {
+  fill: none;
+  stroke-width: 1;
+}
+
+.region--vpc {
+  fill: color-mix(in srgb, var(--surface) 55%, transparent);
+  stroke: var(--line-strong);
+}
+
+.region--subnet {
+  fill: color-mix(in srgb, var(--surface) 70%, transparent);
+  stroke: var(--line);
+}
+
+.region--asg {
+  fill: var(--accent-soft);
+  fill-opacity: 0.45;
+  stroke: var(--accent);
+  stroke-opacity: 0.45;
+  stroke-dasharray: 4 5;
+}
+
+.region-label {
+  fill: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.region-count {
+  fill: var(--accent-ink);
+  font-weight: 500;
+}
+
+.edge {
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  transition: stroke-opacity 500ms var(--ease-out);
+}
+
+.edge--request {
+  stroke: var(--ink-3);
+  stroke-opacity: 0.45;
+}
+
+.edge--static {
+  stroke: var(--static);
+  stroke-opacity: 0.5;
+}
+
+.edge--metric {
+  stroke: var(--metric);
+  stroke-opacity: 0.55;
+  stroke-dasharray: 2 5;
+}
+
+.edge--replica {
+  stroke: var(--ink-3);
+  stroke-opacity: 0.6;
+  stroke-dasharray: 5 5;
+}
+
+.edge.is-idle {
+  stroke-opacity: 0.08;
+}
+
+.routes path {
+  fill: none;
+  stroke: none;
+}
+
+.packet-core {
+  fill: currentColor;
+}
+
+.packet-halo {
+  fill: currentColor;
+  opacity: 0.18;
+}
+
+.packet--request {
+  color: var(--accent);
+}
+
+.packet--static {
+  color: var(--static);
+}
+
+.packet--metric {
+  color: var(--metric);
+}
+
+.packet-ripple {
+  fill: none;
+  stroke-width: 1.5;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.packet-ripple--request {
+  stroke: var(--accent);
+}
+
+.packet-ripple--static {
+  stroke: var(--static);
+}
+
+.packet-ripple--metric {
+  stroke: var(--metric);
+}
+
+.node {
+  outline: none;
+}
+
+.node.is-interactive {
+  cursor: pointer;
+}
+
+.node-hit {
+  fill: transparent;
+}
+
+.node-body {
+  transition: transform 260ms var(--ease-out), opacity 500ms var(--ease-out);
+}
+
+.node-card {
+  fill: var(--surface);
+  stroke: var(--line-strong);
+  stroke-width: 1;
+  filter: drop-shadow(0 6px 12px rgba(16, 32, 27, 0.06));
+  transition: stroke 200ms ease, fill 200ms ease;
+}
+
+.node-well {
+  fill: var(--surface-sunken);
+}
+
+.glyph {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.glyph .glyph-fill {
+  fill: var(--ink);
+  stroke: none;
+}
+
+.is-interactive .glyph {
+  stroke: var(--accent-ink);
+}
+
+.is-interactive .glyph .glyph-fill {
+  fill: var(--accent-ink);
+}
+
+.node-title {
+  fill: var(--ink);
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.node-title--center {
+  text-anchor: middle;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.node-sub {
+  fill: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+}
+
+.tag-text {
+  fill: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.node--tag .node-card {
+  filter: none;
+}
+
+.node.is-selected .node-card,
+.node:focus-visible .node-card {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.node:focus-visible .node-hit {
+  stroke: var(--accent);
+  stroke-opacity: 0.35;
+  stroke-width: 1;
+}
+
+.node.is-selected .node-well {
+  fill: var(--accent-soft);
+}
+
+.node:active .node-body {
+  transform: scale(0.97);
+}
+
+.is-instance.is-idle .node-body {
+  opacity: 0.28;
+  transform: scale(0.94);
+}
+
+.is-instance.is-idle {
+  pointer-events: none;
+}
+
+.is-instance.is-idle .node-card {
+  stroke-dasharray: 4 4;
+  fill: transparent;
+  filter: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .node.is-interactive:hover .node-card {
+    stroke: var(--accent);
+  }
+
+  .node.is-interactive:hover .node-body {
+    transform: translateY(-2px);
+  }
+}
+
+@media (max-width: 760px) {
+  .diagram-host {
+    padding: 4px 6px 12px;
+  }
+
+  .diagram-stage .legend {
+    position: static;
+    flex-direction: row;
+    gap: 8px 16px;
+    padding: 18px 18px 6px;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    font-size: 12.5px;
+  }
+
+  .legend-title {
+    display: none !important;
+  }
+
+  .node-title {
+    font-size: 13px;
+  }
+}

@@ -1,83 +1,65 @@
-# Arquitetura de referência para e-commerce farmacêutico na AWS
+# AWS Pharma Architecture
 
-**[Ver ao vivo](https://leandromlmoreira.github.io/Relatorio-de-implementacao-AWS/)**
+Arquitetura de referência na AWS para um e-commerce farmacêutico, com documentação interativa: siga uma requisição pelo diagrama, abra cada serviço e simule o tráfego com os custos reais da planilha.
 
-[![Preview do site](docs/preview.png)](https://leandromlmoreira.github.io/Relatorio-de-implementacao-AWS/)
+**[Ver ao vivo](https://leandromlmoreira.github.io/aws-pharma-architecture/)**
 
-Infraestrutura de referência para uma plataforma de e-commerce do setor farmacêutico, demonstrando como combinar computação, banco de dados gerenciado e observabilidade na AWS para suportar vendas online, controle de estoque e rastreabilidade de medicamentos controlados.
+[![Pacotes percorrendo a arquitetura enquanto o Auto Scaling sobe de 1 para 5 instâncias](docs/preview.gif)](https://leandromlmoreira.github.io/aws-pharma-architecture/)
 
-O cenário usado é o de uma farmácia fictícia (Abstergo Industries), mas a arquitetura e as práticas aplicadas servem como ponto de partida para qualquer aplicação web que precise de alta disponibilidade, backup automatizado e monitoramento em produção.
+<p>
+  <img src="docs/preview.png" alt="Diagrama da arquitetura no desktop" width="68%" />
+  <img src="docs/preview-mobile.png" alt="Diagrama adaptado para celular" width="28%" />
+</p>
+
+## Funcionalidades
+
+- **Diagrama animado em SVG próprio.** Pacotes percorrem o caminho da requisição (cliente → Route 53 → CloudFront → Load Balancer → EC2 → RDS), com arquivos estáticos indo ao S3 e métricas subindo ao CloudWatch. Layout horizontal no desktop e vertical no celular; com `prefers-reduced-motion`, os pacotes ficam parados.
+- **Painel por serviço.** Clique (ou Enter) em qualquer serviço para ver o papel dele, o custo mensal tirado de `analise-custos.csv` e as decisões de arquitetura, cada uma com o documento de origem.
+- **Simulador de tráfego.** Um slider de pedidos por dia escala as instâncias EC2 no diagrama e recalcula o custo mensal. Regra explícita: 1 instância t3.medium a cada 2.000 pedidos/dia; mínimo, máximo e alvo de CPU lidos de `documentacao-tecnica.md` (1 a 5 instâncias, CPU 70%). Cada instância extra soma a linha da EC2 t3.medium e a do EBS; as demais linhas ficam fixas. Acima de 10.000 pedidos/dia o grupo satura e a CPU passa do alarme de 80%.
+- **AWS x on-premises.** Gráfico de barras com o custo recorrente anual das duas opções, acompanhando o simulador. Um botão remove o salário do administrador de TI e mostra de onde vem a economia.
+- **Custos por linha.** As 15 linhas da planilha ordenadas pelo peso na conta.
+- **Tema claro e escuro** (segue o sistema, com alternância manual), navegação por teclado e layout sem rolagem horizontal a partir de 375 px.
 
 ## Arquitetura
 
 ```
-[Internet] → [Application Load Balancer] → [EC2 (Auto Scaling)] → [RDS MySQL Multi-AZ]
-                                                    ↓
-                                          [CloudWatch: métricas, logs e alertas]
+[Cliente] → [Route 53] → [CloudFront] → [Application Load Balancer] → [EC2 em Auto Scaling] → [RDS MySQL Multi-AZ]
+                              ↓                                                ↓
+                         [S3: estáticos e backup]                  [CloudWatch: métricas, logs e alertas]
 ```
 
-- Tráfego público entra por um Application Load Balancer, que distribui requisições entre instâncias EC2 em Auto Scaling.
-- As instâncias EC2 rodam a aplicação web e se conectam a um banco RDS MySQL isolado em subnets privadas.
-- CloudWatch coleta métricas de CPU, memória, disco e conexões de banco, disparando alertas por e-mail/SMS quando limites são excedidos.
-
-Detalhes de rede, security groups, backup e disaster recovery estão em [`documentacao-tecnica.md`](documentacao-tecnica.md).
-
-## Componentes da arquitetura
-
-| Serviço | Papel na arquitetura |
+| Serviço | Papel |
 |---|---|
-| **Amazon EC2** | Hospeda a aplicação web (pedidos online, catálogo de produtos), com Auto Scaling entre 1 e 5 instâncias |
-| **Amazon RDS (MySQL)** | Banco de dados gerenciado para catálogo, clientes, vendas e controle de medicamentos controlados, com backup automático e alta disponibilidade |
-| **Amazon CloudWatch** | Monitoramento de performance, dashboards e alertas automáticos de disponibilidade |
-| **Amazon VPC** | Isolamento de rede com subnets públicas/privadas, NAT Gateway e security groups dedicados |
-| **Amazon S3** | Armazenamento de backups e arquivos estáticos |
-| **Amazon CloudFront + Route 53** | CDN e DNS para a camada pública da aplicação |
-| **AWS Certificate Manager** | Certificados SSL/TLS para tráfego HTTPS no load balancer |
+| **Route 53 + CloudFront** | DNS e CDN na camada pública |
+| **Application Load Balancer** | HTTPS com certificado do Certificate Manager, health check em `/health` |
+| **EC2 (Auto Scaling)** | Aplicação web em t3.medium, de 1 a 5 instâncias com alvo de CPU em 70% |
+| **RDS MySQL** | Catálogo, clientes, vendas e medicamentos controlados, em subnets privadas, com backup diário |
+| **S3** | Arquivos estáticos e backups |
+| **CloudWatch + SES + SNS** | Métricas, logs e alertas por e-mail e SMS |
+| **VPC** | `10.0.0.0/16` com subnets públicas e privadas e NAT Gateway |
 
-## Exemplo: provisionamento da instância de aplicação
+Detalhes de rede, security groups, backup e disaster recovery estão em [`documentacao-tecnica.md`](documentacao-tecnica.md); o passo a passo de implantação, em [`manual-implementacao-aws.md`](manual-implementacao-aws.md).
 
-```bash
-# Tipo de instância: t3.medium (2 vCPUs, 4 GB RAM), Ubuntu Server 20.04 LTS, 30 GB gp3
-sudo apt update
-sudo apt install nginx mysql-client php-fpm php-mysql
-```
+## Custos
 
-Resultado esperado: instância pronta para servir a aplicação via Nginx, com cliente MySQL configurado para se conectar ao RDS pela subnet privada.
-
-O passo a passo completo (EC2, RDS, CloudWatch, rotinas de manutenção e troubleshooting) está em [`manual-implementacao-aws.md`](manual-implementacao-aws.md).
-
-## Custos e comparação com on-premises
-
-A planilha [`analise-custos.csv`](analise-custos.csv) detalha o custo mensal/anual estimado de cada serviço (~US$ 300/mês) e compara com o custo de manter a mesma capacidade em infraestrutura própria, projetando uma economia anual da ordem de 94%.
+[`analise-custos.csv`](analise-custos.csv) soma US$ 308,30 por mês (US$ 3.699,60 por ano). O front importa o CSV no build e recalcula tudo a partir das linhas. Na comparação com on-premises, a página usa o custo recorrente anual das linhas da planilha (manutenção, energia e administrador de TI: US$ 63.200) e deixa a compra do servidor (US$ 5.000, única) fora da barra. O resultado é uma economia de cerca de 94% ao ano, quase toda vinda do salário do administrador.
 
 ## Stack
 
-AWS: EC2, RDS (MySQL), CloudWatch, VPC, S3, CloudFront, Route 53, ALB, Certificate Manager, SES, SNS.
+- **Infraestrutura:** AWS (EC2, RDS MySQL, CloudWatch, VPC, S3, CloudFront, Route 53, ALB, Certificate Manager, SES, SNS)
+- **Front:** Vite + TypeScript sem framework, SVG e CSS próprios, fontes Bricolage Grotesque, Geist e Geist Mono
+- **Deploy:** GitHub Pages via GitHub Actions ([`deploy-pages.yml`](.github/workflows/deploy-pages.yml))
 
-## Como reproduzir
+## Como rodar
 
-1. Siga [`manual-implementacao-aws.md`](manual-implementacao-aws.md) para provisionar VPC, EC2 e RDS na ordem descrita.
-2. Configure os security groups e o Application Load Balancer conforme [`documentacao-tecnica.md`](documentacao-tecnica.md).
-3. Ative métricas e alertas no CloudWatch e valide os limites de escala automática.
-
-## Front-end de documentação
-
-A pasta `web/` traz uma página estática de uma tela só (Vite + TypeScript) reunindo o diagrama da arquitetura em SVG, um card por componente AWS, a tabela de custos lida diretamente de `analise-custos.csv` com o total mensal/anual, e links para os três documentos do repositório.
-
-```
+```bash
 cd web
 npm install
 npm run dev
 ```
 
-O deploy é automático via GitHub Actions para o GitHub Pages a cada push em `web/` na branch `main`.
-
-## Documentação
-
-- [`documentacao-tecnica.md`](documentacao-tecnica.md) — especificações técnicas, segurança, backup e disaster recovery
-- [`manual-implementacao-aws.md`](manual-implementacao-aws.md) — guia de implementação passo a passo
-- [`analise-custos.csv`](analise-custos.csv) — planilha de custos e comparação com on-premises
+`npm run build` gera `web/dist`. O deploy roda a cada push na `main` que altere `web/`, a planilha ou a documentação técnica.
 
 ---
 
-Base: desafio de infraestrutura da trilha AWS da DIO.
+<sub>Base: desafio de infraestrutura da trilha AWS da DIO.</sub>

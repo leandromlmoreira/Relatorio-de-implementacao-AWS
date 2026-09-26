@@ -1,0 +1,11 @@
+const usd = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'USD' })
+const usdRounded = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
+const integer = new Intl.NumberFormat('pt-BR')
+const percent = new Intl.NumberFormat('pt-BR', { style: 'percent', maximumFractionDigits: 0 })
+const percentPrecise = new Intl.NumberFormat('pt-BR', { style: 'percent', maximumFractionDigits: 1 })
+
+export const formatUsd = (value: number) => usd.format(value)
+export const formatUsdRounded = (value: number) => usdRounded.format(value)
+export const formatInteger = (value: number) => integer.format(value)
+export const formatPercent = (ratio: number) => percent.format(ratio)
+export const formatPercentPrecise = (ratio: number) => percentPrecise.format(ratio)
