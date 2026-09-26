@@ -1,52 +1,67 @@
-# RELATÓRIO DE IMPLEMENTAÇÃO DE SERVIÇOS AWS
+# Arquitetura de referência para e-commerce farmacêutico na AWS
 
-**Data:** 02/09/2025  
-**Empresa:** Abstergo Industries  
-**Responsável:** Leandro Macedo (GitHub: @leandromlmoreira)
+Infraestrutura de referência para uma plataforma de e-commerce do setor farmacêutico, demonstrando como combinar computação, banco de dados gerenciado e observabilidade na AWS para suportar vendas online, controle de estoque e rastreabilidade de medicamentos controlados.
 
-## Descrição do Projeto
+O cenário usado é o de uma farmácia fictícia (Abstergo Industries), mas a arquitetura e as práticas aplicadas servem como ponto de partida para qualquer aplicação web que precise de alta disponibilidade, backup automatizado e monitoramento em produção.
 
-Este projeto consiste na implementação de uma plataforma virtual para uma farmácia fictícia utilizando serviços da AWS. O objetivo é criar uma infraestrutura robusta e escalável que atenda às necessidades específicas do setor farmacêutico, incluindo gestão de estoque, vendas online, controle de medicamentos controlados e análise de dados.
+## Arquitetura
 
-A seguir, serão descritas as etapas do projeto:
+```
+[Internet] → [Application Load Balancer] → [EC2 (Auto Scaling)] → [RDS MySQL Multi-AZ]
+                                                    ↓
+                                          [CloudWatch: métricas, logs e alertas]
+```
 
-### Etapa 1: Infraestrutura Base e Armazenamento
-- **Amazon EC2**
-- **Foco da ferramenta**: Servidor virtual para hospedar a aplicação web da farmácia
-- **Descrição de caso de uso**: Instância EC2 configurada com ambiente de produção para suportar o sistema de gestão farmacêutica, incluindo processamento de pedidos online e integração com sistemas de pagamento
+- Tráfego público entra por um Application Load Balancer, que distribui requisições entre instâncias EC2 em Auto Scaling.
+- As instâncias EC2 rodam a aplicação web e se conectam a um banco RDS MySQL isolado em subnets privadas.
+- CloudWatch coleta métricas de CPU, memória, disco e conexões de banco, disparando alertas por e-mail/SMS quando limites são excedidos.
 
-### Etapa 2: Banco de Dados e Gestão de Informações
-- **Amazon RDS**
-- **Foco da ferramenta**: Banco de dados gerenciado para armazenar informações de produtos, clientes e transações
-- **Descrição de caso de uso**: RDS MySQL para gerenciar catálogo de medicamentos, dados de clientes, histórico de vendas e controle de medicamentos controlados com backup automático e alta disponibilidade
+Detalhes de rede, security groups, backup e disaster recovery estão em [`documentacao-tecnica.md`](documentacao-tecnica.md).
 
-### Etapa 3: Análise de Dados e Monitoramento
-- **Amazon CloudWatch**
-- **Foco da ferramenta**: Monitoramento e análise de performance da aplicação
-- **Descrição de caso de uso**: Acompanhamento em tempo real do desempenho da plataforma, alertas automáticos para problemas de disponibilidade, análise de padrões de vendas e otimização de recursos baseada em métricas de uso
+## Componentes da arquitetura
 
-## Conclusão
+| Serviço | Papel na arquitetura |
+|---|---|
+| **Amazon EC2** | Hospeda a aplicação web (pedidos online, catálogo de produtos), com Auto Scaling entre 1 e 5 instâncias |
+| **Amazon RDS (MySQL)** | Banco de dados gerenciado para catálogo, clientes, vendas e controle de medicamentos controlados, com backup automático e alta disponibilidade |
+| **Amazon CloudWatch** | Monitoramento de performance, dashboards e alertas automáticos de disponibilidade |
+| **Amazon VPC** | Isolamento de rede com subnets públicas/privadas, NAT Gateway e security groups dedicados |
+| **Amazon S3** | Armazenamento de backups e arquivos estáticos |
+| **Amazon CloudFront + Route 53** | CDN e DNS para a camada pública da aplicação |
+| **AWS Certificate Manager** | Certificados SSL/TLS para tráfego HTTPS no load balancer |
 
-A implementação de ferramentas na empresa *Abstergo Industries* tem como esperado *redução de custos operacionais em 30%, melhoria na gestão de estoque com redução de perdas em 25%, aumento de vendas online em 40% e otimização do atendimento ao cliente*, o que aumentará a eficiência e a produtividade da empresa. Recomenda-se a continuidade da utilização das ferramentas implementadas e a busca por novas tecnologias que possam melhorar ainda mais os processos da empresa.
+## Exemplo: provisionamento da instância de aplicação
 
-## Anexos
+```bash
+# Tipo de instância: t3.medium (2 vCPUs, 4 GB RAM), Ubuntu Server 20.04 LTS, 30 GB gp3
+sudo apt update
+sudo apt install nginx mysql-client php-fpm php-mysql
+```
 
-1. **Manual de Implementação AWS** - `manual-implementacao-aws.md`
-   - Guia passo a passo para configuração dos serviços AWS
-   - Instruções de instalação e configuração
-   - Troubleshooting e manutenção
+Resultado esperado: instância pronta para servir a aplicação via Nginx, com cliente MySQL configurado para se conectar ao RDS pela subnet privada.
 
-2. **Documentação Técnica** - `documentacao-tecnica.md`
-   - Arquitetura detalhada da solução
-   - Especificações técnicas dos serviços
-   - Configurações de segurança e backup
+O passo a passo completo (EC2, RDS, CloudWatch, rotinas de manutenção e troubleshooting) está em [`manual-implementacao-aws.md`](manual-implementacao-aws.md).
 
-3. **Análise de Custos** - `analise-custos.csv`
-   - Planilha detalhada de custos mensais e anuais
-   - Comparação com infraestrutura on-premises
-   - Projeção de economia de 94% anual
+## Custos e comparação com on-premises
 
-## Assinatura do Responsável pelo Projeto
+A planilha [`analise-custos.csv`](analise-custos.csv) detalha o custo mensal/anual estimado de cada serviço (~US$ 300/mês) e compara com o custo de manter a mesma capacidade em infraestrutura própria, projetando uma economia anual da ordem de 94%.
 
-Leandro Macedo  
-GitHub: @leandromlmoreira
+## Stack
+
+AWS: EC2, RDS (MySQL), CloudWatch, VPC, S3, CloudFront, Route 53, ALB, Certificate Manager, SES, SNS.
+
+## Como reproduzir
+
+1. Siga [`manual-implementacao-aws.md`](manual-implementacao-aws.md) para provisionar VPC, EC2 e RDS na ordem descrita.
+2. Configure os security groups e o Application Load Balancer conforme [`documentacao-tecnica.md`](documentacao-tecnica.md).
+3. Ative métricas e alertas no CloudWatch e valide os limites de escala automática.
+
+## Documentação
+
+- [`documentacao-tecnica.md`](documentacao-tecnica.md) — especificações técnicas, segurança, backup e disaster recovery
+- [`manual-implementacao-aws.md`](manual-implementacao-aws.md) — guia de implementação passo a passo
+- [`analise-custos.csv`](analise-custos.csv) — planilha de custos e comparação com on-premises
+
+---
+
+Base: desafio de infraestrutura da trilha AWS da DIO.
