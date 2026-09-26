@@ -2,13 +2,27 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
     <meta
       name="description"
-      content="Arquitetura de referência AWS (EC2, RDS, CloudWatch) para e-commerce farmacêutico: diagrama, componentes, custos e documentação técnica."
+      content="Documentação interativa de uma arquitetura AWS para e-commerce farmacêutico: diagrama animado, simulador de tráfego com custo real e comparação com on-premises."
     />
     <title>Arquitetura AWS · E-commerce farmacêutico</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=Geist:wght@400..600&family=Geist+Mono:wght@400;500&display=swap"
+    />
+    <script>
+      document.documentElement.classList.add('js')
+      try {
+        const theme = localStorage.getItem('pharma-aws-theme')
+        if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme
+      } catch {}
+    </script>
   </head>
   <body>
     <div id="app"></div>
