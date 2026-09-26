@@ -1,5 +1,9 @@
 # Arquitetura de referência para e-commerce farmacêutico na AWS
 
+**[Ver ao vivo](https://leandromlmoreira.github.io/Relatorio-de-implementacao-AWS/)**
+
+[![Preview do site](docs/preview.png)](https://leandromlmoreira.github.io/Relatorio-de-implementacao-AWS/)
+
 Infraestrutura de referência para uma plataforma de e-commerce do setor farmacêutico, demonstrando como combinar computação, banco de dados gerenciado e observabilidade na AWS para suportar vendas online, controle de estoque e rastreabilidade de medicamentos controlados.
 
 O cenário usado é o de uma farmácia fictícia (Abstergo Industries), mas a arquitetura e as práticas aplicadas servem como ponto de partida para qualquer aplicação web que precise de alta disponibilidade, backup automatizado e monitoramento em produção.
@@ -55,6 +59,18 @@ AWS: EC2, RDS (MySQL), CloudWatch, VPC, S3, CloudFront, Route 53, ALB, Certifica
 1. Siga [`manual-implementacao-aws.md`](manual-implementacao-aws.md) para provisionar VPC, EC2 e RDS na ordem descrita.
 2. Configure os security groups e o Application Load Balancer conforme [`documentacao-tecnica.md`](documentacao-tecnica.md).
 3. Ative métricas e alertas no CloudWatch e valide os limites de escala automática.
+
+## Front-end de documentação
+
+A pasta `web/` traz uma página estática de uma tela só (Vite + TypeScript) reunindo o diagrama da arquitetura em SVG, um card por componente AWS, a tabela de custos lida diretamente de `analise-custos.csv` com o total mensal/anual, e links para os três documentos do repositório.
+
+```
+cd web
+npm install
+npm run dev
+```
+
+O deploy é automático via GitHub Actions para o GitHub Pages a cada push em `web/` na branch `main`.
 
 ## Documentação
 
