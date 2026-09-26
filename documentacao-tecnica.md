@@ -1,4 +1,4 @@
-# DOCUMENTAÇÃO TÉCNICA - ABSTERGO INDUSTRIES
+# Documentação Técnica — Abstergo Industries
 
 ## Arquitetura da Solução
 
@@ -111,8 +111,3 @@ RDS Security Group:
 - **VPC Flow Logs:** 30 dias
 - **Application Logs:** 7 dias
 
----
-
-**Documento preparado por:** Leandro Macedo  
-**Data:** 02/09/2025  
-**Versão:** 1.0

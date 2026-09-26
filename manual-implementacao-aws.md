@@ -1,4 +1,4 @@
-# MANUAL DE IMPLEMENTAÇÃO AWS - ABSTERGO INDUSTRIES
+# Manual de Implementação AWS — Abstergo Industries
 
 ## Índice
 1. [Introdução](#introdução)
@@ -93,8 +93,3 @@ sudo apt install nginx mysql-client php-fpm php-mysql
    - Verificar logs detalhados
    - Escalar recursos se necessário
 
----
-
-**Documento preparado por:** Leandro Macedo  
-**Data:** 02/09/2025  
-**Versão:** 1.0
